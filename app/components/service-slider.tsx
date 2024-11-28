@@ -1,105 +1,92 @@
-'use client'
+'use client';
 
-import { useState, useRef, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import Image from 'next/image'
-import { cn } from '../lib/utils'
-import { fontHeading } from '../app/fonts'
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { fontHeading } from "../app/fonts";
 
 interface ServiceSliderProps {
   service: {
-    title: string
-    description: string
-    images: string[]
-  }
-  index: number
+    title: string;
+    description: string;
+    images: string[];
+    points: string[];
+  };
 }
 
-const ServiceSlider: React.FC<ServiceSliderProps> = ({ service, index }) => {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [isVisible, setIsVisible] = useState(false)
-  const sliderRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting)
-      },
-      { threshold: 0.1 }
-    )
-
-    if (sliderRef.current) {
-      observer.observe(sliderRef.current)
-    }
-
-    return () => {
-      if (sliderRef.current) {
-        observer.unobserve(sliderRef.current)
-      }
-    }
-  }, [])
+const ServiceSlider: React.FC<ServiceSliderProps> = ({ service }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const nextSlide = () => {
     setCurrentIndex((prevIndex) =>
       prevIndex === service.images.length - 1 ? 0 : prevIndex + 1
-    )
-  }
+    );
+  };
 
   const prevSlide = () => {
     setCurrentIndex((prevIndex) =>
       prevIndex === 0 ? service.images.length - 1 : prevIndex - 1
-    )
-  }
+    );
+  };
 
   return (
-    <motion.div
-      ref={sliderRef}
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 50 }}
-      transition={{ duration: 0.6, delay: index * 0.2 }}
-      className="relative mb-24"
-    >
-      <h3 className={cn("text-3xl font-bold mb-4", fontHeading.className)}>
+    <div className="relative bg-gradient-to-br from-blue-900 to-purple-900 p-8 rounded-lg shadow-lg">
+      {/* Title */}
+      <h3
+        className={`text-3xl font-bold mb-4 text-white ${fontHeading.className}`}
+      >
         {service.title}
       </h3>
+
+      {/* Description */}
       <p className="text-white/80 mb-6">{service.description}</p>
-      <div className="relative aspect-video overflow-hidden rounded-lg">
-        <Image
-          src={service.images[currentIndex]}
-          alt={`${service.title} image ${currentIndex + 1}`}
-          fill
-          className="object-cover"
-        />
+
+      {/* Slider */}
+      <div className="relative w-full aspect-video rounded-lg overflow-hidden mb-6">
+        <AnimatePresence>
+          <motion.div
+            key={currentIndex}
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -100 }}
+            transition={{ duration: 0.5 }}
+            className="absolute w-full h-full"
+          >
+            <Image
+              src={service.images[currentIndex]}
+              alt={`${service.title} image ${currentIndex + 1}`}
+              layout="fill"
+              objectFit="cover"
+              className="rounded-lg"
+            />
+          </motion.div>
+        </AnimatePresence>
+        {/* Navigation Buttons */}
         <button
           onClick={prevSlide}
           className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full text-white/80 hover:bg-black/70 transition-colors"
-          aria-label="Previous image"
+          aria-label="Previous slide"
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
         <button
           onClick={nextSlide}
           className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full text-white/80 hover:bg-black/70 transition-colors"
-          aria-label="Next image"
+          aria-label="Next slide"
         >
           <ChevronRight className="w-6 h-6" />
         </button>
       </div>
-      <div className="flex justify-center mt-4 space-x-2">
-        {service.images.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentIndex(i)}
-            className={`w-3 h-3 rounded-full ${
-              i === currentIndex ? 'bg-white' : 'bg-white/50'
-            }`}
-            aria-label={`Go to image ${i + 1}`}
-          />
-        ))}
-      </div>
-    </motion.div>
-  )
-}
 
-export default ServiceSlider
+      {/* Bullet Points */}
+      <ul className="list-disc list-inside space-y-2 text-white/70">
+        {service.points.map((point, index) => (
+          <li key={index}>{point}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default ServiceSlider;

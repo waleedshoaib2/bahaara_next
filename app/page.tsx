@@ -6,31 +6,48 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { ScrollProgress } from './components/scroll-progress'
 import { ParallaxSection } from './components/parallax-section'
-import { ImageReveal } from './components/image-reveal'
+// import { ImageReveal } from './components/image-reveal'
 import { BackButton } from './components/back-button'
 import { fontHeading } from './app/fonts'
 import { cn } from './lib/utils'
 import ParticleBackground from './components/particle-background'
-import ServiceSlider from './components/service-slider'
+
+import {ServicesSection} from './components/ServicesSection'
+import FuturisticTimeline from './components/futuristic-timeline'
 
 const services = [
   {
     title: "Perfumes",
     description: "Exquisite fragrances for every occasion.",
-    images: Array.from({ length: 11 }, (_, i) => `/perfumes/${i + 1}.jpg`)
+    images: Array.from({ length: 7 }, (_, i) => `/perfumes/${i + 1}.jpg`),
+    points: [
+      "Handcrafted with premium ingredients",
+      "Long-lasting and captivating scents",
+      "Wide variety of fragrances",
+    ],
   },
   {
     title: "Meals",
     description: "Delicious culinary experiences for all tastes.",
-    images: Array.from({ length: 15 }, (_, i) => `/meals/${i + 1}.jpg`)
+    images: Array.from({ length: 15 }, (_, i) => `/meals/${i + 1}.jpg`),
+    points: [
+      "Prepared by top chefs",
+      "Fresh and organic ingredients",
+      "Available for delivery and dine-in",
+    ],
+  }, {
+    title: "Hotels",
+    description: "Delicious culinary experiences for all tastes.",
+    images: Array.from({ length: 10 }, (_, i) => `/hotels/${i + 1}.jpg`),
+    points: [
+      "Prepared by top chefs",
+      "Fresh and organic ingredients",
+      "Available for delivery and dine-in",
+    ],
   }
-  // ,
-  // {
-  //   title: "Hotels",
-  //   description: "Luxurious accommodations for your perfect stay.",
-  //   images: Array.from({ length: 10 }, (_, i) => `/hotels/${i + 1}.jpg`)
-  // }
 ];
+
+
 
 const team = [
   {
@@ -56,8 +73,8 @@ export default function Home() {
 
   const sectionVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       transition: {
         duration: 0.6,
@@ -78,12 +95,11 @@ export default function Home() {
 
   return (
     <div className="bg-[#010210] min-h-7xl text-white overflow-x-hidden">
-      <ScrollProgress />
-      
-      {/* Navigation */}
+
+
       <nav className="fixed top-0 left-0 w-full bg-black/80 backdrop-blur-md z-40 px-6 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             className={cn("text-2xl font-bold", fontHeading.className)}
@@ -100,8 +116,6 @@ export default function Home() {
           </motion.button>
         </div>
       </nav>
-
-      {/* Fullscreen Menu */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
@@ -111,6 +125,16 @@ export default function Home() {
             transition={{ duration: 0.5, ease: "easeInOut" }}
             className="fixed inset-0 bg-gradient-to-br from-blue-900 to-[#010210] z-40 flex items-center justify-center"
           >
+            {/* Close Button */}
+            <button
+              onClick={() => setIsMenuOpen(false)}
+              className="absolute top-8 right-8 bg-black/70 text-white p-2 rounded-full hover:bg-black/50 transition duration-300"
+              aria-label="Close Menu"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            {/* Menu Items */}
             <motion.div
               variants={staggerContainer}
               initial="hidden"
@@ -122,9 +146,9 @@ export default function Home() {
                   key={item}
                   variants={sectionVariants}
                   onClick={() => {
-                    const element = document.getElementById(item.toLowerCase())
-                    element?.scrollIntoView({ behavior: 'smooth' })
-                    setIsMenuOpen(false)
+                    const element = document.getElementById(item.toLowerCase());
+                    element?.scrollIntoView({ behavior: 'smooth' });
+                    setIsMenuOpen(false);
                   }}
                   className={cn(
                     "text-4xl font-bold hover:text-purple-400 transition-colors",
@@ -139,8 +163,8 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+
+     <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
         <ParticleBackground />
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -176,7 +200,7 @@ export default function Home() {
             <p className="text-xl md:text-2xl text-white/80">
               BA-HAA-RA
             </p>
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
@@ -188,34 +212,11 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* Services Section */}
-      <section id="services" className="py-32">
-        <ParallaxSection className="max-w-7xl mx-auto px-6">
-          <motion.h2
-            variants={sectionVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className={cn("text-4xl font-bold mb-12 text-center", fontHeading.className)}
-          >
-            Our Services
-          </motion.h2>
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="space-y-24"
-          >
-            {services.map((service, index) => (
-              <ServiceSlider key={service.title} service={service} index={index} />
-            ))}
-          </motion.div>
-        </ParallaxSection>
-      </section>
-      <div className='mt-100'></div>
+     
 
-      {/* Team Section */}
+      <ServicesSection services={services}/>
+
+
       <section id="team" className="py-32">
         <ParallaxSection className="max-w-7xl mx-auto px-6">
           <motion.h2
@@ -262,46 +263,78 @@ export default function Home() {
         </ParallaxSection>
       </section>
 
-      {/* Contact Section */}
-     {/* Contact Section */}
-<section id="contact" className="py-32 bg-gradient-to-t from-black to-blue-900/20">
-  <ParallaxSection className="max-w-7xl mx-auto px-6">
-    <motion.h2
-      variants={sectionVariants}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true }}
-      className={cn("text-4xl font-bold mb-12 text-center", fontHeading.className)}
-    >
-      Contact Us
-    </motion.h2>
-    <motion.div  // Correct placement of opening tag
-      variants={staggerContainer}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true }}
-      className="grid grid-cols-1 md:grid-cols-2 gap-8"
-    >
-      <motion.div
-        variants={sectionVariants}
-        whileHover={{ scale: 1.02 }}
-        className="p-6 bg-gradient-to-br from-blue-900/20 to-blue-900/20 rounded-lg border border-purple-500/30 backdrop-blur-sm"
-      >
-        <h3 className={cn("text-xl font-bold mb-4", fontHeading.className)}>Email</h3>
-        <p className="text-white/80">bahaara.sa1@gmail.com</p>
-      </motion.div>
-      <motion.div
-        variants={sectionVariants}
-        whileHover={{ scale: 1.02 }} // Add the whileHover effect back to the phone div
-        className="p-6 bg-gradient-to-br from-blue-900/20 to-blue-900/20 rounded-lg border border-purple-500/30 backdrop-blur-sm"
-      >
-        <h3 className={cn("text-xl font-bold mb-4", fontHeading.className)}>Phone</h3>
-        <p className="text-white/80">+966 54 959 9977</p>
-        <p className="text-white/80">+966 56 229 5254</p>
-      </motion.div>
-    </motion.div>  {/* Correct placement of closing tag */}
-  </ParallaxSection>
-</section>
+      <FuturisticTimeline/>
+
+     
+
+      <section id="contact" className="py-32 bg-gradient-to-t from-black to-blue-900/20">
+        <ParallaxSection className="max-w-7xl mx-auto px-6">
+          <motion.h2
+            variants={sectionVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className={cn("text-4xl font-bold mb-12 text-center", fontHeading.className)}
+          >
+            Contact Us
+          </motion.h2>
+          <motion.div  // Correct placement of opening tag
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-8"
+          >
+            <motion.div
+              variants={sectionVariants}
+              whileHover={{ scale: 1.02 }}
+              className="p-6 bg-gradient-to-br from-blue-900/20 to-blue-900/20 rounded-lg border border-purple-500/30 backdrop-blur-sm"
+            >
+              <h3 className={cn("text-xl font-bold mb-4", fontHeading.className)}>Email</h3>
+              <p className="text-white/80">bahaara.sa1@gmail.com</p>
+            </motion.div>
+            <motion.div
+              variants={sectionVariants}
+              whileHover={{ scale: 1.02 }} // Add the whileHover effect back to the phone div
+              className="p-6 bg-gradient-to-br from-blue-900/20 to-blue-900/20 rounded-lg border border-purple-500/30 backdrop-blur-sm"
+            >
+              <h3 className={cn("text-xl font-bold mb-4", fontHeading.className)}>Phone</h3>
+              <p className="text-white/80">+966 54 959 9977</p>
+              <p className="text-white/80">+966 56 229 5254</p>
+            </motion.div>
+          </motion.div>  {/* Correct placement of closing tag */}
+        </ParallaxSection>
+      </section>
+
+
+      <section id="about-us" className="py-32 bg-black text-white">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-4xl font-bold mb-6"
+          >
+            About Us
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-lg leading-relaxed mb-6"
+          >
+            We are a Saudi-based company specializing in marketing, photography, videography, editing, and cinematography. Our mission is to capture moments and turn them into timeless memories with creativity and excellence.
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-lg leading-relaxed"
+          >
+            With a skilled and passionate team, we bring your vision to life through innovative storytelling and the latest technologies. From local events to international projects, we are dedicated to delivering exceptional results that exceed expectations.
+          </motion.p>
+        </div>
+      </section>
 
 
 
@@ -355,4 +388,3 @@ export default function Home() {
     </div>
   )
 }
-
